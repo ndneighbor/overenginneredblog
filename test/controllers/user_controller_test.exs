@@ -45,12 +45,12 @@ defmodule Overengineered.UserControllerTest do
     assert html_response(conn, 200) =~ "Edit user"
   end
 
-  test "updates chosen resource and redirects when data is valid", %{conn: conn} do
-    user = Repo.insert! %User{}
-    conn = put conn, user_path(conn, :update, user), user: @valid_create_attrs
-    assert redirected_to(conn) == user_path(conn, :show, user)
-    assert Repo.get_by(User, @valid_attrs)
-  end
+test "updates chosen resource and redirects when data is valid", %{conn: conn} do
+  user = Repo.insert! %User{}
+  conn = put conn, user_path(conn, :update, user), user: @valid_create_attrs
+  assert redirected_to(conn) == user_path(conn, :show, user)
+  assert Repo.get_by(User, @valid_attrs)
+end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
     user = Repo.insert! %User{}
@@ -64,4 +64,15 @@ defmodule Overengineered.UserControllerTest do
     assert redirected_to(conn) == user_path(conn, :index)
     refute Repo.get(User, user.id)
   end
+
+  test "password_digest value gets set to a hash" do
+    changeset = User.changeset(%User{}, @valid_create_attrs)
+    assert Comeonin.Bcrypt.checkpw(@valid_create_attrs.password, Ecto.Changeset.get_change(changeset, :password_digest))
+  end
+
+  test "password_digest value does not get set if password is nil" do
+    changeset = User.changeset(%User{}, %{email: "test@test.com", password: nil, password_confirmation: nil, username: "test"})
+    refute Ecto.Changeset.get_change(changeset, :password_digest)
+  end
+
 end
