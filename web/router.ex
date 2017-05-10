@@ -20,6 +20,8 @@ defmodule Overengineered.Router do
 
     resources "/users", UserController
 
+    resources "/sessions", SessionController, only: [:new, :create]
+
     get "/", PageController, :index
   end
 
