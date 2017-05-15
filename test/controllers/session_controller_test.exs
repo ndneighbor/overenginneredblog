@@ -1,6 +1,7 @@
 defmodule Overengineered.SessionControllerTest do
   use Overengineered.ConnCase
   alias Overengineered.User
+  
   setup do
     User.changeset(%User{}, %{username: "test", password: "test", password_confirmation: "test", email: "test@test.com"})
     |> Repo.insert
